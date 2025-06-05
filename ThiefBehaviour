@@ -1,0 +1,42 @@
+using UnityEngine;
+using UnityEngine.AI;
+
+[RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(Animator))]
+public class ThiefBehaviour : MonoBehaviour
+{
+    public Transform[] generatorTargets;
+
+    private int targetIndex = 0;
+    private Transform currentTarget;
+    private NavMeshAgent agent;
+    private Animator animator;
+    private float smoothSpeed = 0f;
+
+    void Start()
+    {
+        agent = GetComponent<NavMeshAgent>();
+        animator = GetComponent<Animator>();
+        animator.applyRootMotion = false;
+
+        if (generatorTargets.Length > 0)
+        {
+            currentTarget = generatorTargets[targetIndex];
+            agent.SetDestination(currentTarget.position);
+        }
+    }
+
+    void Update()
+    {
+        float velocity = agent.velocity.magnitude;
+        smoothSpeed = Mathf.Lerp(smoothSpeed, velocity, Time.deltaTime * 10f);
+        animator.SetFloat("Speed", smoothSpeed);
+
+        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+        {
+            targetIndex = (targetIndex + 1) % generatorTargets.Length;
+            currentTarget = generatorTargets[targetIndex];
+            agent.SetDestination(currentTarget.position);
+        }
+    }
+}

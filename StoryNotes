@@ -1,0 +1,37 @@
+using UnityEngine;
+using TMPro;
+
+public class StoryNotes : MonoBehaviour
+{
+    public GameObject storyCanvas;
+    public TextMeshProUGUI noteText;
+    public string[] notes;
+    private int currentNoteIndex = 0;
+    private bool storyActive = true;
+
+    void Start()
+    {
+        Time.timeScale = 0f; // Pause the game
+        storyCanvas.SetActive(true);
+        noteText.text = notes[currentNoteIndex];
+    }
+
+    void Update()
+    {
+        if (storyActive && (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space)))
+        {
+            currentNoteIndex++;
+
+            if (currentNoteIndex < notes.Length)
+            {
+                noteText.text = notes[currentNoteIndex];
+            }
+            else
+            {
+                storyCanvas.SetActive(false);
+                Time.timeScale = 1f; // Resume the game
+                storyActive = false;
+            }
+        }
+    }
+}
